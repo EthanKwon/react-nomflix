@@ -32,7 +32,7 @@ export default class extends React.Component {
       if (isMovie) {
         ({ data: result } = await movieApi.movieDetail(parsedId));
       } else {
-        ({ data: result } = await tvApi.movieDetail(parsedId));
+        ({ data: result } = await tvApi.showDetail(parsedId));
       }
     } catch {
       this.setState({
