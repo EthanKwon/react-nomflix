@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Helmet from "react-helmet";
 import Loader from "../../Components/Loader";
 import Message from "../../Components/Message";
-import YouTube from "react-youtube";
+import DetailTab from "./DetailTab";
 
 const Container = styled.div`
   height: calc(100vh - 50px);
@@ -74,73 +74,8 @@ const Overview = styled.p`
   line-height: 2;
   width: 50%;
 `;
-const DataBottom = styled.div`
-  width: 100%;
-  height: 50%;
-`;
 
-const TapMenu = styled.ul`
-  display: flex;
-  width: 70%;
-  height: 15%;
-`;
-
-const TapItem = styled.li`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  margin: 10px 0;
-  font-size: 18px;
-  border-bottom: ${props => (props.current === true ? "2px solid #fff" : "")};
-`;
-
-let tapCurrent = [true, false, false];
-
-const TapContent = styled.div`
-  width: 100%;
-  height: 85%;
-  background-color: rgba(255, 255, 255, 0.5);
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  overflow-x: scroll;
-
-  &::-webkit-scrollbar {
-    height: 10px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(20, 20, 20, 0.8);
-    transition: background-color 0.1s ease-in-out;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-  }
-`;
-
-const YoutubeBox = styled.div`
-  margin: 0 10px;
-`;
-
-const opts = {
-  height: "292",
-  width: "480",
-  playerVars: {
-    autoplay: 0
-  }
-};
-
-const clickTapMenu = e => {
-  e.preventDefault();
-  tapCurrent = [false, false, false];
-  tapCurrent[e.target.value] = true;
-  console.log(tapCurrent);
-};
-
-const DetailPresenter = ({ result, error, loading }) =>
+const DetailPresenter = ({ result, error, loading, tabMenu, handleClick }) =>
   loading ? (
     <>
       <Helmet>
@@ -201,38 +136,21 @@ const DetailPresenter = ({ result, error, loading }) =>
             </ItemContainer>
             <Overview>{result.overview}</Overview>
           </DataTop>
-          <DataBottom>
-            <TapMenu>
-              <TapItem value={0} current={tapCurrent[0]} onClick={clickTapMenu}>
-                Trailer
-              </TapItem>
-              <TapItem value={1} current={tapCurrent[1]} onClick={clickTapMenu}>
-                Production Company
-              </TapItem>
-              <TapItem value={2} current={tapCurrent[2]} onClick={clickTapMenu}>
-                Countries
-              </TapItem>
-            </TapMenu>
-            <TapContent>
-              {result.videos.results &&
-                result.videos.results.map(video => (
-                  <YoutubeBox key={video.id}>
-                    <YouTube
-                      videoId={video.key}
-                      opts={opts}
-                      className="Youtube"
-                    />
-                  </YoutubeBox>
-                ))}
-            </TapContent>
-          </DataBottom>
+          <DetailTab
+            youtube={result.videos}
+            collection={result.belongs_to_collection}
+            companies={result.production_companies}
+            countries={result.production_countries}
+            tabCurrent={tabMenu}
+            handleClick={handleClick}
+          />
         </Data>
       </Content>
     </Container>
   );
 
 DetailPresenter.propTypes = {
-  result: PropTypes.array,
+  result: PropTypes.object,
   error: PropTypes.string,
   loading: PropTypes.bool.isRequired
 };

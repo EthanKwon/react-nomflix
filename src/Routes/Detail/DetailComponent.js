@@ -12,9 +12,23 @@ export default class extends React.Component {
       result: null,
       error: null,
       loading: true,
-      isMovie: pathname.includes("/movie/")
+      isMovie: pathname.includes("/movie/"),
+      tabMenu: [true, false, false]
     };
   }
+
+  clickTab = event => {
+    event.target.value === 0
+      ? this.setState({
+          tabMenu: [true, false, false]
+        })
+      : event.target.value === 1
+      ? this.setState({
+          tabMenu: [false, true, false]
+        })
+      : this.setState({ tabMenu: [false, false, true] });
+  };
+
   async componentDidMount() {
     const {
       match: {
@@ -47,8 +61,16 @@ export default class extends React.Component {
   }
 
   render() {
-    const { result, error, loading } = this.state;
+    const { result, error, loading, tabMenu } = this.state;
 
-    return <DetailPresenter result={result} error={error} loading={loading} />;
+    return (
+      <DetailPresenter
+        result={result}
+        error={error}
+        loading={loading}
+        tabMenu={tabMenu}
+        handleClick={this.clickTab}
+      />
+    );
   }
 }
